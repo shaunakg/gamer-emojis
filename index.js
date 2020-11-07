@@ -39,11 +39,16 @@ const denylist = [
         ip: "::ffff:10.45.9.232",
         name: "Hugo",
         reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
-    },    {
+    },
+    {
         ip: "::ffff:10.97.235.153",
         name: "Hugo",
         reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
     },
+
+    {
+        ip: "::ffff:"
+    }
 
 ];
 
@@ -74,8 +79,8 @@ function emojiUnicode (emoji) {
 
 app.use((req, res, next) => {
 
-    if (denyListIncludes(req.connection.remoteAddress)) {
-        let denyobject = denyListIncludes(req.connection.remoteAddress);
+    if (denyListIncludes(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
+        let denyobject = denyListIncludes(req.headers['x-forwarded-for'] || req.connection.remoteAddress);
 
         return fs.readFile(block_html_location, (err, data) => {
 
@@ -95,7 +100,7 @@ app.use((req, res, next) => {
 
 app.get("/preflight", (req, res) => {
     res.end("application error");
-    console.log("PREFLIGHT FOUND REMOTE ADDRESS: " + req.connection.remoteAddress)
+    console.log("PREFLIGHT FOUND REMOTE ADDRESS: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
 })
 
 app.get("/", (req, res) => {
@@ -103,7 +108,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/:emoji", (req, res) => {
-    console.log("PREFLIGHT FOUND REMOTE ADDRESS: " + req.connection.remoteAddress)
+    console.log("PREFLIGHT FOUND REMOTE ADDRESS: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
     res.sendFile(__dirname + `/emojis/${emojiUnicode(req.params.emoji).toUpperCase()}.svg`);
 })
 
