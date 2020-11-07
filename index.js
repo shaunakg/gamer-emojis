@@ -102,6 +102,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/:emoji", (req, res) => {
+    console.log("PREFLIGHT FOUND REMOTE ADDRESS: " + req.connection.remoteAddress)
     res.sendFile(__dirname + `/emojis/${emojiUnicode(req.params.emoji).toUpperCase()}.svg`);
 })
 
