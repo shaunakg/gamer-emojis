@@ -47,7 +47,9 @@ const denylist = [
     },
 
     {
-        ip: "::ffff:"
+        ip: "49.176.231.97",
+        name: "Aksaya",
+        reason: "Hugo's block wasn't working"
     }
 
 ];
