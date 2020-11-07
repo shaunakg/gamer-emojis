@@ -13,6 +13,11 @@ const denylist = [
         ip: "::ffff:10.41.198.134",
         name: "Hugo",
         reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
+    },
+    {
+        ip: "10.41.198.134",
+        name: "Hugo",
+        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
     }
 ];
 
@@ -68,11 +73,15 @@ app.get("/preflight", (req, res) => {
 })
 
 app.get("/", (req, res) => {
-    res.end(`<!doctype html><html>Welcome to gamer emojis. Use like so: https://${req.get('host')}/&#128540;</html>`)
+    res.end(`<!doctype html><html>Welcome to gamer emojis. Use like so: https://${req.get('host')}/&#128540;><br><br>
+    
+    <a href='/preflight/'>LMAO!!! I'm hugo and I still got access!!!</a>
+    
+    </html>`)
 });
 
 app.get("/:emoji", (req, res) => {
-    res.sendFile(__dirname + `/emojis/${emojiUnicode(req.params.emoji)}.svg`);
+    res.sendFile(__dirname + `/emojis/${emojiUnicode(req.params.emoji).toUpperCase()}.svg`);
 })
 
 http.listen(webport, function(){
