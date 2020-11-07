@@ -16,41 +16,16 @@ const block_html_location = "block.html";
 
 const denylist = [
     {
-        ip: "::ffff:10.41.198.134",
-        name: "Hugo",
-        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
-    },
-    {
-        ip: "10.41.198.134",
-        name: "Hugo",
-        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
-    },
-    {
-        ip: "::ffff:10.37.246.199",
-        name: "Hugo",
-        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
-    },
-    {
-        ip: "::ffff:10.5.185.29",
-        name: "Hugo",
-        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
-    },
-    {
-        ip: "::ffff:10.45.9.232",
-        name: "Hugo",
-        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
-    },
-    {
-        ip: "::ffff:10.97.235.153",
+        ip: "61.68.254.19",
         name: "Hugo",
         reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
     },
 
-    {
-        ip: "49.176.231.97",
-        name: "Aksaya",
-        reason: "Hugo's block wasn't working"
-    }
+    // {
+    //     ip: "49.176.231.97",
+    //     name: "Aksaya",
+    //     reason: "Hugo's block wasn't working"
+    // }
 
 ];
 
