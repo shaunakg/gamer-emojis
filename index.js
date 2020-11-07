@@ -63,6 +63,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/preflight", (req, res) => {
+    res.end("application error");
     console.log("PREFLIGHT FOUND REMOTE ADDRESS: " + req.connection.remoteAddress)
 })
 
