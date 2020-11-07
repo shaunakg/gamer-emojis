@@ -73,11 +73,7 @@ app.get("/preflight", (req, res) => {
 })
 
 app.get("/", (req, res) => {
-    res.end(`<!doctype html><html>Welcome to gamer emojis. Use like so: https://${req.get('host')}/&#128540;<br><br>
-    
-    <a href='/preflight/'>LMAO!!! I'm hugo and I still got access!!!</a>
-    
-    </html>`)
+    res.end(`<!doctype html><html>Welcome to gamer emojis. Use like so: https://${req.get('host')}/&#128540;</html>`)
 });
 
 app.get("/:emoji", (req, res) => {
