@@ -8,6 +8,9 @@ app.use(require('express-useragent').express())
 
 const block_html_location = "block.html";
 
+// ::ffff:10.37.246.199
+// ::ffff:10.5.185.29
+
 const denylist = [
     {
         ip: "::ffff:10.41.198.134",
@@ -18,7 +21,18 @@ const denylist = [
         ip: "10.41.198.134",
         name: "Hugo",
         reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
+    },
+    {
+        ip: "::ffff:10.37.246.199",
+        name: "Hugo",
+        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
+    },
+    {
+        ip: "::ffff:10.5.185.29",
+        name: "Hugo",
+        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
     }
+
 ];
 
 const denyListIncludes = (ip) => {
