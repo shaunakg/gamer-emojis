@@ -38,13 +38,17 @@ const denylist = [
         name: "Hugo",
         reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
     },
-    
+    {
+        ip: "::1",
+        name: "Hugo",
+        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
+    },
 
 ];
 
 const denyListIncludes = (ip) => {
     for (i = 0; i < denylist.length; i++) {
-        if (denylist[i].ip == ip) {
+        if (denylist[i].ip == ip || denylist[i] == ip.replace("::ffff:", "")) {
             return denylist[i];
         }
     }
@@ -72,7 +76,7 @@ app.use((req, res, next) => {
     if (denyListIncludes(req.connection.remoteAddress)) {
         let denyobject = denyListIncludes(req.connection.remoteAddress);
 
-        fs.readFile(block_html_location, (err, data) => {
+        return fs.readFile(block_html_location, (err, data) => {
 
             console.log("File is read.");
 
