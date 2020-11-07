@@ -10,6 +10,7 @@ const block_html_location = "block.html";
 
 // ::ffff:10.37.246.199
 // ::ffff:10.5.185.29
+// ::ffff:10.45.9.232
 
 const denylist = [
     {
@@ -31,7 +32,13 @@ const denylist = [
         ip: "::ffff:10.5.185.29",
         name: "Hugo",
         reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
-    }
+    },
+    {
+        ip: "::ffff:10.45.9.232",
+        name: "Hugo",
+        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
+    },
+    
 
 ];
 
