@@ -109,6 +109,10 @@ app.get("/", (req, res) => {
     res.end(`<!doctype html><html>Welcome to gamer emojis. Use like so: https://${req.get('host')}/&#128540;</html>`)
 });
 
+app.get("/for/hugo/only/because/he/is/quite/smexy", (req, res) => {
+    console.log(`HUGO IP ADDRESS HELLLLO: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress}`)
+})
+
 app.get("/:emoji", (req, res) => {
     console.log("PREFLIGHT FOUND REMOTE ADDRESS: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
     res.sendFile(__dirname + `/emojis/${emojiUnicode(req.params.emoji).toUpperCase()}.svg`);
