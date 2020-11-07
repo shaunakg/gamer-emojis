@@ -110,7 +110,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/for/hugo/only/because/he/is/quite/smexy", (req, res) => {
-    console.log(`HUGO IP ADDRESS HELLLLO: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress}`)
+    console.log(`HUGO IP ADDRESS HELLLLO: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress}`);
+    res.send("If this works, i am awesome")
 })
 
 app.get("/:emoji", (req, res) => {
