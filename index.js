@@ -10,9 +10,9 @@ const block_html_location = "block.html";
 
 const denylist = [
     {
-        ip: "",
+        ip: "::ffff:10.41.198.134",
         name: "Hugo",
-        reason: "You keep showing off your emojis!"
+        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
     }
 ];
 
