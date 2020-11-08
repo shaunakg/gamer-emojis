@@ -4,6 +4,8 @@ var http = require('http').createServer(app);
 var fs = require('fs');
 const webport = process.env.PORT || 8080;
 
+const fetch = require('node-fetch');
+
 app.use(require('express-useragent').express())
 
 const block_html_location = "block.html";
@@ -110,13 +112,39 @@ app.get("/", (req, res) => {
         )
 
     }
-    return res.end(`<!doctype html><head><title>Gamer emojis</title></head><html>Welcome to gamer emojis. Use like so: https://${req.get('host')}/&#128540;</html>`)
+
+    return res.sendFile(__dirname + "/index.html");
 });
 
 app.get("/for/hugo/only/because/he/is/quite/smexy", (req, res) => {
     console.log(`HUGO IP ADDRESS HELLLLO: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress}`);
     res.send("If this works, i am awesome")
 })
+
+app.get("/s/:slug", (req, res) => {
+    fetch("https://docs.google.com/spreadsheets/d/1g1BhiYhla_4BfD5drp_oKZmYLaAWdsA29zcQT5NKsDs/export?format=tsv").then((response) => response.text()).then((text) => {
+
+        let lines = text.split("\n")
+        lines.shift()
+        let dict = {}
+
+        for (i = 0; i<lines.length; i++) {
+
+            let line = lines[i].split("\t");
+            dict[line[2]] = line[1];
+
+        }
+
+        console.dir(dict);
+
+        if (dict[req.params.slug]) {
+            return res.redirect(301, dict[req.params.slug])
+        } else {
+            return res.status(400).send("Bad URL :(")
+        }
+
+    });
+});
 
 app.get("/:emoji", (req, res) => {
     if (stringIncludesItemInList(req.useragent.source, crawler_uas)) {
