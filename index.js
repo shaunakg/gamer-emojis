@@ -20,7 +20,7 @@ const head = `
 // ::ffff:10.45.9.232
 // ::ffff:10.97.235.153
 
-const crawler_uas = ["facebookexternalhit"];
+const crawler_uas = ["facebookexternalhit", "cortex"];
 
 const denylist = [
     {
