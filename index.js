@@ -76,16 +76,6 @@ app.use((req, res, next) => {
 
     console.log("Connection from remote origin: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress) + ", user agent " + req.useragent.source)
 
-    if (stringIncludesItemInList(req.useragent.source, crawler_uas)) {
-
-        return res.send(
-            head.replace("[[TITLE]]", "So, you're a cool person. You're lookin for some spicy emojis.")
-                .replace("[[DESCRIPTION]]", `The normal ${req.params.emoji || 'one'} just isn't cutting it for you. Well, you've come to the right place. Check out GamerEmojis.`)
-            + "</body></html>"
-        )
-
-    }
-
     if (denyListIncludes(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
         let denyobject = denyListIncludes(req.headers['x-forwarded-for'] || req.connection.remoteAddress);
 
@@ -111,7 +101,16 @@ app.get("/preflight", (req, res) => {
 })
 
 app.get("/", (req, res) => {
-    res.end(`<!doctype html><html>Welcome to gamer emojis. Use like so: https://${req.get('host')}/&#128540;</html>`)
+    if (stringIncludesItemInList(req.useragent.source, crawler_uas)) {
+
+        return res.send(
+            head.replace("[[TITLE]]", "So, you're a cool person. You're lookin for some spicy emojis.")
+                .replace("[[DESCRIPTION]]", `The normal ones just aren't cutting it for you. Well, you've come to the right place. Check out GamerEmojis.`)
+            + `Welcome to gamer emojis. Use like so: https://${req.get('host')}/&#128540;</body></html>`
+        )
+
+    }
+    return res.end(`<!doctype html><head><title>Gamer emojis</title></head><html>Welcome to gamer emojis. Use like so: https://${req.get('host')}/&#128540;</html>`)
 });
 
 app.get("/for/hugo/only/because/he/is/quite/smexy", (req, res) => {
@@ -120,8 +119,17 @@ app.get("/for/hugo/only/because/he/is/quite/smexy", (req, res) => {
 })
 
 app.get("/:emoji", (req, res) => {
-    console.log("PREFLIGHT FOUND REMOTE ADDRESS: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
-    res.sendFile(__dirname + `/emojis/${emojiUnicode(req.params.emoji).toUpperCase()}.svg`);
+    if (stringIncludesItemInList(req.useragent.source, crawler_uas)) {
+
+        return res.send(
+            head.replace("[[TITLE]]", "So, you're a cool person. You're lookin for some spicy emojis.")
+                .replace("[[DESCRIPTION]]", `The normal ${req.params.emoji} emoji just isn't cutting it for you. Well, you've come to the right place. Check out GamerEmojis.`)
+            + `</body></html>`
+        )
+
+    }
+
+    return res.sendFile(__dirname + `/emojis/${emojiUnicode(req.params.emoji).toUpperCase()}.svg`);
 })
 
 http.listen(webport, function(){
