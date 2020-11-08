@@ -7,12 +7,20 @@ const webport = process.env.PORT || 8080;
 app.use(require('express-useragent').express())
 
 const block_html_location = "block.html";
+const head = `
+<!doctype html>
+<head>
+<title>[[TITLE]]</title>
+<meta name="description" content="[[DESCRIPTION]]">
+</head><body>
+`;
 
 // ::ffff:10.37.246.199
 // ::ffff:10.5.185.29
 // ::ffff:10.45.9.232
 // ::ffff:10.97.235.153
 
+const crawler_uas = ["facebookexternalhit"];
 
 const denylist = [
     {
@@ -37,6 +45,16 @@ const denyListIncludes = (ip) => {
     }
 
     return false;
+}  
+
+const stringIncludesItemInList = (s, l) => {
+    for (i in l) {
+        if (s.includes(i)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function emojiUnicode (emoji) {
@@ -55,6 +73,18 @@ function emojiUnicode (emoji) {
 };
 
 app.use((req, res, next) => {
+
+    console.log("Connection from remote origin: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress) + ", user agent " + req.useragent.source)
+
+    if (stringIncludesItemInList(req.useragent.source, crawler_uas)) {
+
+        res.send(
+            head.replace("[[TITLE]]", "So, you're a cool person. You're lookin for some spicy emojis.")
+                .replace("[[DESCRIPTION]]", `The normal ${req.params.emoji || 'one'} just isn't cutting it for you. Well, you've come to the right place. Check out GamerEmojis.`)
+            + "</body></html>"
+        )
+
+    }
 
     if (denyListIncludes(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
         let denyobject = denyListIncludes(req.headers['x-forwarded-for'] || req.connection.remoteAddress);
@@ -76,8 +106,8 @@ app.use((req, res, next) => {
 });
 
 app.get("/preflight", (req, res) => {
+    console.log("Specific PREFLIGHT remote addr: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress) + ", user agent " + req.useragent.source)
     res.end("application error");
-    console.log("PREFLIGHT FOUND REMOTE ADDRESS: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
 })
 
 app.get("/", (req, res) => {
