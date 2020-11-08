@@ -48,8 +48,8 @@ const denyListIncludes = (ip) => {
 }  
 
 const stringIncludesItemInList = (s, l) => {
-    for (i in l) {
-        if (s.includes(i)) {
+    for (i = 0; i < l.length; i++) {
+        if (s.includes(l[i])) {
             return true;
         }
     }
@@ -78,7 +78,7 @@ app.use((req, res, next) => {
 
     if (stringIncludesItemInList(req.useragent.source, crawler_uas)) {
 
-        res.send(
+        return res.send(
             head.replace("[[TITLE]]", "So, you're a cool person. You're lookin for some spicy emojis.")
                 .replace("[[DESCRIPTION]]", `The normal ${req.params.emoji || 'one'} just isn't cutting it for you. Well, you've come to the right place. Check out GamerEmojis.`)
             + "</body></html>"
