@@ -131,7 +131,7 @@ app.get("/s/:slug", (req, res) => {
         for (i = 0; i<lines.length; i++) {
 
             let line = lines[i].split("\t");
-            dict[line[2]] = line[1];
+            dict[line[2].replace("\r", "")] = line[1].replace("\r","");
 
         }
 
