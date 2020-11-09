@@ -140,7 +140,11 @@ app.get("/s/:slug", (req, res) => {
         if (dict[req.params.slug]) {
             return res.redirect(301, dict[req.params.slug])
         } else {
-            return res.status(400).send("Bad URL :(")
+
+            var reqUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+            let fullUrl = `https://docs.google.com/forms/d/e/1FAIpQLSesUJmIa_DFjrLUb-6TuSQA773gxvtuWabwzuuExTk-PD_S5g/viewform?usp=pp_url&entry.1958630459=${encodeURIComponent(req.params.slug)}&entry.1255600363=You+went+to+an+nonexistent+URL+(${encodeURIComponent(reqUrl)})+and+are+being+redirected+so+you+can+make+it+a+valid+one+if+you+want.Just+fill+in+the+very+first+field.`;
+            return res.redirect(fullUrl);
+
         }
 
     });
