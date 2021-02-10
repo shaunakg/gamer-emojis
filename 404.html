@@ -41,7 +41,7 @@
         special.href = '/s' + location.pathname;
         path.innerText = location.pathname;
 
-        !location.pathname.contains("config") &&  fetch('/s' + location.pathname, {method: "HEAD", redirect: "manual"}).then((response) => {
+        !location.pathname.includes("config") &&  fetch('/s' + location.pathname, {method: "HEAD", redirect: "manual"}).then((response) => {
            console.dir(response)
             if (response.headers.get("X-Is-Special-Link") === "FALSE") {
                 console.log(`doesn't exist`);
