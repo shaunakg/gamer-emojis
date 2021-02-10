@@ -82,7 +82,7 @@ app.use((req, res, next) => {
     console.log("Connection from remote origin: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress) + ", user agent " + req.useragent.source)
 
     if (req.protocol !== "https") {
-        res.redirect('https://' + req.headers.host + req.url);
+        return res.redirect('https://' + req.headers.host + req.url);
     }
 
     if (denyListIncludes(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
