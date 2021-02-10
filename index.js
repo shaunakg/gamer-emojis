@@ -28,7 +28,7 @@ const denylist = [
     {
         ip: "61.68.254.19",
         name: "Hugo",
-        reason: "You keep showing off your emojis on iphone like come on bro not all of us can afford the duplex iphone pro max xs vibrator edition"
+        reason: "Is hugo"
     },
 
     // {
@@ -116,11 +116,6 @@ app.get("/", (req, res) => {
     return res.sendFile(__dirname + "/index.html");
 });
 
-app.get("/for/hugo/only/because/he/is/quite/smexy", (req, res) => {
-    console.log(`HUGO IP ADDRESS HELLLLO: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress}`);
-    res.send("If this works, i am awesome")
-})
-
 app.get("/s/:slug", (req, res) => {
     fetch("https://docs.google.com/spreadsheets/d/1g1BhiYhla_4BfD5drp_oKZmYLaAWdsA29zcQT5NKsDs/export?format=tsv").then((response) => response.text()).then((text) => {
 
@@ -155,7 +150,7 @@ app.get("/:emoji", (req, res) => {
 
         return res.send(
             head.replace("[[TITLE]]", "So, you're a cool person. You're lookin for some spicy emojis.")
-                .replace("[[DESCRIPTION]]", `The normal ${req.params.emoji} emoji just isn't cutting it for you. Well, you've come to the right place. Check out GamerEmojis.`)
+                .replace("[[DESCRIPTION]]", `The normal ${req.params.emoji} emoji just isn't cutting it for you. Well, you've come to the right place. Check out Extended Emojis.`)
             + `</body></html>`
         )
 
