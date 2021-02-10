@@ -1,3 +1,4 @@
+const { RSA_NO_PADDING } = require('constants');
 var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
@@ -174,7 +175,19 @@ app.get("/:emoji", (req, res) => {
     } else {
         res.status(404).sendFile(__dirname + "/404.html");
     }
-})
+});
+
+app.get('/config/ec2/:metaPath', async (req, res) => {
+
+    try {
+        let response = await fetch(`http://169.254.169.254/latest/meta-data/${req.params.metaPath}`);
+        let text = await response.text();
+        res.end(text);
+    } catch (e) {
+        res.status(404).sendFile(__dirname + "/404.html");
+    }
+
+});
 
 http.listen(webport, function(){
     console.log('listening on *:' + webport);
