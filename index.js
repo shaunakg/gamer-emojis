@@ -4,6 +4,8 @@ var http = require('http').createServer(app);
 var fs = require('fs');
 const webport = process.env.PORT || 8080;
 
+let cache = {populatedTime: 0, content: {}};
+
 const fetch = require('node-fetch');
 
 app.use(require('express-useragent').express())
@@ -116,33 +118,42 @@ app.get("/", (req, res) => {
     return res.sendFile(__dirname + "/index.html");
 });
 
-app.get("/s/:slug", (req, res) => {
-    fetch("https://docs.google.com/spreadsheets/d/1g1BhiYhla_4BfD5drp_oKZmYLaAWdsA29zcQT5NKsDs/export?format=tsv").then((response) => response.text()).then((text) => {
+app.get("/s/:slug", async (req, res) => {
 
-        let lines = text.split("\n")
+    let dict = {}
+    let fromCache;
+
+    if (new Date().getTime() - cache.populatedTime > 600000 || req.query.cache == "0") {
+        let response = await fetch("https://docs.google.com/spreadsheets/d/1g1BhiYhla_4BfD5drp_oKZmYLaAWdsA29zcQT5NKsDs/export?format=tsv")
+        let lines = (await response.text()).split("\n")
+
         lines.shift()
-        let dict = {}
 
         for (i = 0; i<lines.length; i++) {
-
             let line = lines[i].split("\t");
             dict[line[2].replace("\r", "")] = line[1].replace("\r","");
-
         }
 
-        console.dir(dict);
-
-        if (dict[req.params.slug]) {
-            return res.redirect(301, dict[req.params.slug])
-        } else {
-
-            var reqUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-            let fullUrl = `https://docs.google.com/forms/d/e/1FAIpQLSesUJmIa_DFjrLUb-6TuSQA773gxvtuWabwzuuExTk-PD_S5g/viewform?usp=pp_url&entry.1958630459=${encodeURIComponent(req.params.slug)}&entry.1255600363=You+went+to+an+nonexistent+URL+(${encodeURIComponent(reqUrl)})+and+are+being+redirected+so+you+can+make+it+a+valid+one+if+you+want.Just+fill+in+the+very+first+field.`;
-            return res.redirect(fullUrl);
-
+        cache = {
+            populatedTime: new Date.getTime(),
+            content: dict
         }
 
-    });
+        fromCache = true;
+
+    } else {
+        dict = cache.content;
+        fromCache = false;
+    }
+
+    if (dict[req.params.slug]) {
+        return res.set('X-Cache', fromCache ? "HIT":"MISS").redirect(301, dict[req.params.slug])
+    } else {
+        var reqUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        let fullUrl = `https://docs.google.com/forms/d/e/1FAIpQLSesUJmIa_DFjrLUb-6TuSQA773gxvtuWabwzuuExTk-PD_S5g/viewform?usp=pp_url&entry.1958630459=${encodeURIComponent(req.params.slug)}&entry.1255600363=You+went+to+an+nonexistent+URL+(${encodeURIComponent(reqUrl)})+and+are+being+redirected+so+you+can+make+it+a+valid+one+if+you+want.Just+fill+in+the+very+first+field.`;
+        return res.redirect(fullUrl);
+    }
+
 });
 
 app.get("/:emoji", (req, res) => {
