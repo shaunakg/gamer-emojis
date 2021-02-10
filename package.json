@@ -18,6 +18,7 @@
   "homepage": "https://github.com/shaunakg/gamer-emojis#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-useragent": "^1.0.15",
     "node-fetch": "^2.6.1"

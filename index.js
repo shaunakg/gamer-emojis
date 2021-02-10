@@ -9,6 +9,7 @@ let cache = {populatedTime: 0, content: {}};
 
 const fetch = require('node-fetch');
 
+app.use(require('cors')({allowedHeaders: "X-Is-Special-Link", exposedHeaders: "X-Is-Special-Link"}))
 app.use(require('express-useragent').express())
 
 const block_html_location = "block.html";
