@@ -135,7 +135,7 @@ app.get("/s/:slug", async (req, res) => {
         }
 
         cache = {
-            populatedTime: new Date.getTime(),
+            populatedTime: new Date().getTime(),
             content: dict
         }
 
@@ -147,11 +147,11 @@ app.get("/s/:slug", async (req, res) => {
     }
 
     if (dict[req.params.slug]) {
-        return res.set('X-Cache', fromCache ? "HIT":"MISS").redirect(301, dict[req.params.slug])
+        return res.set({'X-Cache': fromCache ? "HIT":"MISS", "X-Is-Special-Link": "TRUE"}).redirect(301, dict[req.params.slug])
     } else {
         var reqUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         let fullUrl = `https://docs.google.com/forms/d/e/1FAIpQLSesUJmIa_DFjrLUb-6TuSQA773gxvtuWabwzuuExTk-PD_S5g/viewform?usp=pp_url&entry.1958630459=${encodeURIComponent(req.params.slug)}&entry.1255600363=You+went+to+an+nonexistent+URL+(${encodeURIComponent(reqUrl)})+and+are+being+redirected+so+you+can+make+it+a+valid+one+if+you+want.Just+fill+in+the+very+first+field.`;
-        return res.redirect(fullUrl);
+        return res.set({"X-Is-Special-Link": "FALSE"}).redirect(fullUrl);
     }
 
 });
@@ -167,7 +167,13 @@ app.get("/:emoji", (req, res) => {
 
     }
 
-    return res.sendFile(__dirname + `/emojis/${emojiUnicode(req.params.emoji).toUpperCase()}.svg`);
+    let fn = __dirname + `/emojis/${emojiUnicode(req.params.emoji).toUpperCase()}.svg`;
+
+    if (fs.existsSync(fn)) {
+        return res.sendFile(fn);
+    } else {
+        res.status(404).sendFile(__dirname + "/404.html");
+    }
 })
 
 http.listen(webport, function(){
