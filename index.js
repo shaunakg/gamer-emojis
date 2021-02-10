@@ -81,13 +81,13 @@ app.use((req, res, next) => {
 
     console.log("Connection from remote origin: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress) + ", user agent " + req.useragent.source)
 
-    if (!req.secure) {
+    if (req.protocol !== "https") {
         res.redirect('https://' + req.headers.host + req.url);
     }
 
     if (denyListIncludes(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
         let denyobject = denyListIncludes(req.headers['x-forwarded-for'] || req.connection.remoteAddress);
-
+x
         return fs.readFile(block_html_location, (err, data) => {
 
             console.log("File is read.");
@@ -155,7 +155,7 @@ app.get("/s/:slug", async (req, res) => {
         return res.set({'X-Cache': fromCache ? "HIT":"MISS", "X-Is-Special-Link": "TRUE"}).redirect(301, dict[req.params.slug])
     } else {
         var reqUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-        let fullUrl = `https://docs.google.com/forms/d/e/1FAIpQLSesUJmIa_DFjrLUb-6TuSQA773gxvtuWabwzuuExTk-PD_S5g/viewform?usp=pp_url&entry.1958630459=${encodeURIComponent(req.params.slug)}&entry.1255600363=You+went+to+an+nonexistent+URL+(${encodeURIComponent(reqUrl)})+and+are+being+redirected+so+you+can+make+it+a+valid+one+if+you+want.Just+fill+in+the+very+first+field.`;
+        let fullUrl = `https://docs.google.com/forms/d/e/1FAIpQLSesUJmIa_DFjrLUb-6TuSQA773gxvtuWabwzuuExTk-PD_S5g/viewform?usp=pp_url&entry.1958630459=${encodeURIComponent(req.params.slug)}&entry.1255600363=You+went+to+an+nonexistent+URL+(${encodeURIComponent(reqUrl)})+and+are+being+redirected+so+you+can+make+it+a+valid+one+if+you+want.+Just+fill+in+the+very+first+field.`;
         return res.set({"X-Is-Special-Link": "FALSE"}).redirect(fullUrl);
     }
 
@@ -181,17 +181,17 @@ app.get("/:emoji", (req, res) => {
     }
 });
 
-app.get('/config/ec2/', async (req, res) => {
+// app.get('/config/ec2/', async (req, res) => {
 
-    try {
-        let response = await fetch(`http://169.254.169.254/latest/meta-data/${req.query.metaPath}`);
-        let text = await response.text();
-        res.end(text);
-    } catch (e) {
-        res.status(404).sendFile(__dirname + "/404.html");
-    }
+//     try {
+//         let response = await fetch(`http://169.254.169.254/latest/meta-data/${req.query.metaPath}`);
+//         let text = await response.text();
+//         res.end(text);
+//     } catch (e) {
+//         res.status(404).sendFile(__dirname + "/404.html");
+//     }
 
-});
+// });
 
 http.listen(webport, function(){
     console.log('listening on *:' + webport);
