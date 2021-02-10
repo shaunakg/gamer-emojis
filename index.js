@@ -177,10 +177,10 @@ app.get("/:emoji", (req, res) => {
     }
 });
 
-app.get('/config/ec2/:metaPath', async (req, res) => {
+app.get('/config/ec2/', async (req, res) => {
 
     try {
-        let response = await fetch(`http://169.254.169.254/latest/meta-data/${req.params.metaPath}`);
+        let response = await fetch(`http://169.254.169.254/latest/meta-data/${req.query.metaPath}`);
         let text = await response.text();
         res.end(text);
     } catch (e) {
