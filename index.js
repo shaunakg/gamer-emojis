@@ -30,7 +30,7 @@ const crawler_uas = ["facebookexternalhit", "cortex"];
 
 const denylist = [
     {
-        ip: "61.68.254.19",
+        ip_range: ["61.68.254.19"],
         name: "Hugo",
         reason: "Is hugo"
     },
@@ -45,7 +45,7 @@ const denylist = [
 
 const denyListIncludes = (ip) => {
     for (i = 0; i < denylist.length; i++) {
-        if (denylist[i].ip == ip || denylist[i] == ip.replace("::ffff:", "")) {
+        if (denylist[i].ip_range.includes(ip) || denylist[i].ip_range.includes(ip.replace("::ffff:", ""))) {
             return denylist[i];
         }
     }
