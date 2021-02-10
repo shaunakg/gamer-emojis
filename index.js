@@ -141,11 +141,11 @@ app.get("/s/:slug", async (req, res) => {
             content: dict
         }
 
-        fromCache = true;
+        fromCache = false;
 
     } else {
         dict = cache.content;
-        fromCache = false;
+        fromCache = true;
     }
 
     if (dict[req.params.slug]) {
