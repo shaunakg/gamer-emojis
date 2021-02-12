@@ -54,7 +54,8 @@ router.all("*", (req, res, next) => {
             status: 429,
             title: "Too many requests.",
             message: `You're sending too many requests. Please wait ${Math.round(rateLimitActual/100)/10} seconds to try again.`,
-            diagnostics: require('../index').getDiags(req)
+            diagnostics: require('../index').getDiags(req),
+            host: req.get('host')
         });
     }
 })
