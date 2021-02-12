@@ -1,0 +1,81 @@
+<!doctype html>
+
+<head>
+    <title>{{status}} - {{message}} | Extended Emojis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 1.2rem;
+            display: flex;
+            flex-flow: row wrap;
+
+            justify-content: center;
+            align-items: center;
+
+            width: 100vw;
+            height: 100vh;
+
+            margin: 0; padding: 0;
+            background-color: #181a1b;
+            color: rgb(232, 230, 227);
+
+            line-height: 1.4;
+        }
+
+        span {
+            margin: 20px;
+            border: 5px solid rgb(53, 57, 59);
+            padding: 20px;
+            background-color: lightcoral;
+            color: black;
+
+            max-width: 700px;
+        }
+
+        details {
+            font-size: 0.95rem;
+        }
+
+        details summary {
+            user-select: none;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        details code {
+            font-size: small;
+            word-wrap: break-word;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<span id="x">
+
+    <h2>{{status}} - {{title}}</h2>
+    {{#if message}}<b>{{message}}</b><br/>{{/if}}
+    Here are some things you can try: <br/>
+    <ul>
+        <li>To access a normal emoji, put it at the end of the base URL. For example, <a href="https://{{host}}/😎">https://{{host}}/😎</a></li>
+        <li>To access a special emoji, go to /s/[emoji-id]/. For example, <a href="https://{{host}}/s/jeans">https://{{host}}/s/jeans</a>. </li>
+        <li><a href="https://forms.gle/LYawk4LvAkC1ziKa9">Click here to add your own special emoji!</a></li>
+    </ul>
+
+    {{#if diagnostics}}
+        <details>
+            <summary>Click for diagnostic information</summary>
+            <code>{{diagnostics}}</code>
+        </details>
+    {{/if}}
+
+
+</span>
+
+</body>
+
+</html>

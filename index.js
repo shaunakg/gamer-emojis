@@ -18,10 +18,21 @@ let cache = {populatedTime: 0, content: {}};
 const fetch = require('node-fetch');
 const { exit } = require('process');
 
+app.engine('.hbs', require('express-handlebars')({
+    defaultLayout: "httperror",
+    extname: ".hbs",
+    layoutsDir: __dirname + "/views/"
+}));
+
+app.set('view engine', "hbs");
+app.set('views', __dirname + '/views');
+
+app.use(require('./components/limit'));
+
 app.use(require('cors')({allowedHeaders: "X-Is-Special-Link", exposedHeaders: "X-Is-Special-Link"}))
 app.use(require('express-useragent').express())
 
-const block_html_location = "block.html";
+const block_html_location = "/public/block.html";
 const head = `
 <!doctype html>
 <head>
@@ -72,6 +83,19 @@ const stringIncludesItemInList = (s, l) => {
     return false;
 }
 
+const getDiags = (req) => (JSON.stringify({
+    method: req.method,
+    headers: req.headers,
+    params: req.params,
+    query: req.query,
+    body: req.body,
+    path: req.url,
+    host: req.get('host'),
+    url: req.protocol + '://' + req.get('host') + req.originalUrl
+}));
+
+module.exports.getDiags = getDiags;
+
 const eu = (emoji) => {
     return emojiUnicode(emoji)
         .toUpperCase()
@@ -81,22 +105,15 @@ const eu = (emoji) => {
         .replace(" ", "-")
 }
 
-// function emojiUnicode (emoji) {
-//     var comp;
-//     if (emoji.length === 1) {
-//         comp = emoji.charCodeAt(0);
-//     }
-//     comp = (
-//         (emoji.charCodeAt(0) - 0xD800) * 0x400
-//       + (emoji.charCodeAt(1) - 0xDC00) + 0x10000
-//     );
-//     if (comp < 0) {
-//         comp = emoji.charCodeAt(0);
-//     }
-//     return comp.toString("16");
-// };
+process.env.full_disable === "true" && app.use((req, res) => {return res.end("Service is down while effective API rate limiting is implemented.");})
 
-app.use("*", (req, res) => {return res.end("Service is down while effective API rate limiting is implemented.");})
+app.use((req, res, next) => {
+    if (req.get('user-agent') == "ELB-HealthChecker/2.0") {
+        return res.status(200).end("Web server is up and running. Response made to ELB Health Check to reduce database load.")
+    } else {
+        next();
+    }
+})
 
 app.use((req, res, next) => {
 
@@ -126,6 +143,36 @@ app.get("/preflight", (req, res) => {
     res.end("application error");
 })
 
+app.get("/public/:fileName", (req, res) => {
+
+    if (req.params.fileName.includes("..")) {
+        return res.status(403).render("httperror", {
+            host: req.get('host'),
+            status: 403,
+            title: "That's an error."
+        });
+    } else {
+        return res.sendFile(__dirname + "/public/" + req.params.fileName, (err) => {
+            if (err) {
+                return res.status(403).render("httperror", {
+                    host: req.get('host'),
+                    status: 403,
+                    title: "That's an error."
+                });
+            }
+        });
+    }
+});
+
+app.get("/error/:status", (req, res) => {
+    return res.status(parseInt(req.params.status)).render('httperror', {
+        status: req.params.status,
+        message: "That's an error.",
+        host: req.get('host'),
+        diagnostics: getDiags(req)
+    });
+})
+
 app.get("/", (req, res) => {
     if (stringIncludesItemInList(req.useragent.source, crawler_uas)) {
 
@@ -137,7 +184,7 @@ app.get("/", (req, res) => {
 
     }
 
-    return res.sendFile(__dirname + "/index.html");
+    return res.sendFile(__dirname + "/public/index.html");
 });
 
 app.get("/s/:slug", async (req, res) => {
@@ -203,7 +250,11 @@ app.get("/:emoji", async (req, res) => {
             Expires: parseInt(process.env.default_url_expiry_seconds)
         }));
     } catch (e) {
-        return res.status(404).sendFile(__dirname + "/404.html");
+        return res.status(404).render('httperror', {
+            status: 404,
+            message: `Emoji ${req.params.emoji} not found.`,
+            host: req.get('host')
+        });
     }
 
 });
