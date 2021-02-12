@@ -96,6 +96,8 @@ const eu = (emoji) => {
 //     return comp.toString("16");
 // };
 
+app.use("*", (req, res) => {return res.end("Service is down while effective API rate limiting is implemented.");})
+
 app.use((req, res, next) => {
 
     console.log("Connection from remote origin: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress) + ", user agent " + req.useragent.source)
