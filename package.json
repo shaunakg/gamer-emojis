@@ -17,8 +17,11 @@
   },
   "homepage": "https://github.com/shaunakg/gamer-emojis#readme",
   "dependencies": {
+    "aws-sdk": "^2.842.0",
     "axios": "^0.21.1",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "emoji-unicode": "^2.0.1",
     "express": "^4.17.1",
     "express-useragent": "^1.0.15",
     "node-fetch": "^2.6.1"

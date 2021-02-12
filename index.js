@@ -3,11 +3,20 @@ var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
 var fs = require('fs');
+const emojiUnicode = require('emoji-unicode');
+
+require('dotenv').config();
+
 const webport = process.env.PORT || 8080;
+
+// S3 init
+const AWS = require('aws-sdk')
+const s3 = new AWS.S3();
 
 let cache = {populatedTime: 0, content: {}};
 
 const fetch = require('node-fetch');
+const { exit } = require('process');
 
 app.use(require('cors')({allowedHeaders: "X-Is-Special-Link", exposedHeaders: "X-Is-Special-Link"}))
 app.use(require('express-useragent').express())
@@ -63,20 +72,29 @@ const stringIncludesItemInList = (s, l) => {
     return false;
 }
 
-function emojiUnicode (emoji) {
-    var comp;
-    if (emoji.length === 1) {
-        comp = emoji.charCodeAt(0);
-    }
-    comp = (
-        (emoji.charCodeAt(0) - 0xD800) * 0x400
-      + (emoji.charCodeAt(1) - 0xDC00) + 0x10000
-    );
-    if (comp < 0) {
-        comp = emoji.charCodeAt(0);
-    }
-    return comp.toString("16");
-};
+const eu = (emoji) => {
+    return emojiUnicode(emoji)
+        .toUpperCase()
+        .replace("200D", "")
+        .replace("  ", "")
+        .trim()
+        .replace(" ", "-")
+}
+
+// function emojiUnicode (emoji) {
+//     var comp;
+//     if (emoji.length === 1) {
+//         comp = emoji.charCodeAt(0);
+//     }
+//     comp = (
+//         (emoji.charCodeAt(0) - 0xD800) * 0x400
+//       + (emoji.charCodeAt(1) - 0xDC00) + 0x10000
+//     );
+//     if (comp < 0) {
+//         comp = emoji.charCodeAt(0);
+//     }
+//     return comp.toString("16");
+// };
 
 app.use((req, res, next) => {
 
@@ -126,6 +144,7 @@ app.get("/s/:slug", async (req, res) => {
     let fromCache;
 
     if (new Date().getTime() - cache.populatedTime > 600000 || req.query.cache == "0") {
+
         let response = await fetch("https://docs.google.com/spreadsheets/d/1g1BhiYhla_4BfD5drp_oKZmYLaAWdsA29zcQT5NKsDs/export?format=tsv")
         let lines = (await response.text()).split("\n")
 
@@ -158,7 +177,8 @@ app.get("/s/:slug", async (req, res) => {
 
 });
 
-app.get("/:emoji", (req, res) => {
+app.get("/:emoji", async (req, res) => {
+
     if (stringIncludesItemInList(req.useragent.source, crawler_uas)) {
 
         return res.send(
@@ -169,13 +189,21 @@ app.get("/:emoji", (req, res) => {
 
     }
 
-    let fn = __dirname + `/emojis/${emojiUnicode(req.params.emoji).toUpperCase()}.svg`;
+    const s3headparams = {
+        Bucket: process.env.emojis_bucket_name,
+        Key: process.env.bucket_emojis_folder_prefix + `${eu(decodeURIComponent(req.params.emoji))}.svg`
+    };
 
-    if (fs.existsSync(fn)) {
-        return res.sendFile(fn);
-    } else {
-        res.status(404).sendFile(__dirname + "/404.html");
+    try {
+        await s3.headObject(s3headparams).promise();
+        return res.redirect(302, s3.getSignedUrl('getObject', {
+            ...s3headparams,
+            Expires: parseInt(process.env.default_url_expiry_seconds)
+        }));
+    } catch (e) {
+        return res.status(404).sendFile(__dirname + "/404.html");
     }
+
 });
 
 // app.get('/config/ec2/', async (req, res) => {
