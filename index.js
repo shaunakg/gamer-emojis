@@ -1,4 +1,3 @@
-const { RSA_NO_PADDING } = require('constants');
 var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
@@ -9,14 +8,9 @@ require('dotenv').config();
 
 const webport = process.env.PORT || 8080;
 
-// S3 init
-const AWS = require('aws-sdk')
-const s3 = new AWS.S3();
-
 let cache = {populatedTime: 0, content: {}};
 
 const fetch = require('node-fetch');
-const { exit } = require('process');
 
 app.engine('.hbs', require('express-handlebars')({
     defaultLayout: "httperror",
@@ -238,24 +232,7 @@ app.get("/:emoji", async (req, res) => {
 
     }
 
-    const s3headparams = {
-        Bucket: process.env.emojis_bucket_name,
-        Key: process.env.bucket_emojis_folder_prefix + `${eu(decodeURIComponent(req.params.emoji))}.svg`
-    };
-
-    try {
-        await s3.headObject(s3headparams).promise();
-        return res.redirect(302, s3.getSignedUrl('getObject', {
-            ...s3headparams,
-            Expires: parseInt(process.env.default_url_expiry_seconds)
-        }));
-    } catch (e) {
-        return res.status(404).render('httperror', {
-            status: 404,
-            message: `Emoji ${req.params.emoji} not found.`,
-            host: req.get('host')
-        });
-    }
+    return res.status(302).redirect(`https://storage.googleapis.com/extended-emojis/emojis/${eu(decodeURIComponent(req.params.emoji))}.svg`);
 
 });
 
